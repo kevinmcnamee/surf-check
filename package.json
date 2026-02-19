@@ -9,7 +9,8 @@
     "check": "npx tsx scripts/check-forecast.ts",
     "check:debug": "npx tsx scripts/check-forecast.ts --debug",
     "check:json": "npx tsx scripts/check-forecast.ts --json",
-    "check:cron": "npx tsx scripts/check-forecast.ts --cron"
+    "check:cron": "npx tsx scripts/check-forecast.ts --cron",
+    "login": "npx tsx scripts/login-surfline.ts"
   },
   "keywords": [
     "surfline",
@@ -19,6 +20,9 @@
   ],
   "author": "Kevin McNamee",
   "license": "MIT",
+  "dependencies": {
+    "playwright": "^1.40.0"
+  },
   "devDependencies": {
     "@types/node": "^20.10.0",
     "tsx": "^4.7.0",
