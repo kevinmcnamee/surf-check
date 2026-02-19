@@ -208,10 +208,6 @@ OUTPUT=$(cd /path/to/surf-check && npm run check:cron 2>/dev/null)
 0 */6 * * * cd /path/to/surf-check && npm run check:cron | mail -s "Surf Alert" you@email.com
 ```
 
-### Home Automation
-
-Works with Home Assistant, n8n, Node-RED — anything that can run a script and act on stdout.
-
 ## Project Structure
 
 ```
