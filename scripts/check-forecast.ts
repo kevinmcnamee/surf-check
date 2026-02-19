@@ -35,7 +35,7 @@ async function main() {
   // Load state for deduplication
   const state = await loadState();
 
-  if (!cronMode) {
+  if (!cronMode && !jsonOutput) {
     console.log('🏄 Checking Surfline forecasts...\n');
   }
 
