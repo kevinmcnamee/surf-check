@@ -1,7 +1,7 @@
 {
   "name": "surf-check",
   "version": "0.1.0",
-  "description": "Smart surf forecast alerts based on Surfline data",
+  "description": "AI agent skill for smart surf forecast alerts with tiered confidence",
   "type": "module",
   "main": "dist/index.js",
   "scripts": {
@@ -13,13 +13,26 @@
     "login": "npx tsx scripts/login-surfline.ts"
   },
   "keywords": [
-    "surfline",
     "surf",
     "forecast",
-    "alerts"
+    "alerts",
+    "surfline",
+    "ai-agent",
+    "openclaw",
+    "cli",
+    "automation",
+    "noaa"
   ],
   "author": "Kevin McNamee",
   "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/kevinmcnamee/surf-check.git"
+  },
+  "homepage": "https://github.com/kevinmcnamee/surf-check#readme",
+  "bugs": {
+    "url": "https://github.com/kevinmcnamee/surf-check/issues"
+  },
   "dependencies": {
     "playwright": "^1.40.0"
   },
