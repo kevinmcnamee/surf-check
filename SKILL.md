@@ -1,6 +1,6 @@
 ---
-name: surfline-alerts
-description: Monitors Surfline forecasts and alerts when surf conditions are good for Monmouth County, NJ (Belmar, Long Branch).
+name: surf-check
+description: Smart surf forecast alerts with tiered confidence. Monitors conditions and alerts when worth paddling out.
 metadata:
   openclaw:
     emoji: "🏄"

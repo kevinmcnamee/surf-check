@@ -1,5 +1,5 @@
 {
-  "name": "surfline-alerts",
+  "name": "surf-check",
   "version": "0.1.0",
   "description": "Smart surf forecast alerts based on Surfline data",
   "type": "module",

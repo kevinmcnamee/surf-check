@@ -1,6 +1,6 @@
-# 🏄 Surfline Alerts
+# 🏄 surf-check
 
-Smart surf forecast alerts based on Surfline data. Get notified when conditions are worth paddling out — with tiered confidence based on forecast accuracy.
+Smart surf forecast alerts. Get notified when conditions are worth paddling out — with tiered confidence based on forecast accuracy.
 
 ## Features
 
@@ -25,8 +25,8 @@ Same-day alerts are suppressed after 6am (dawn patrol has already passed).
 ## Installation
 
 ```bash
-git clone https://github.com/yourusername/surfline-alerts.git
-cd surfline-alerts
+git clone https://github.com/yourusername/surf-check.git
+cd surf-check
 npm install
 ```
 
@@ -148,7 +148,7 @@ rm data/state.json
 ### Cron Job (every 6 hours)
 
 ```bash
-0 */6 * * * cd /path/to/surfline-alerts && npm run check:cron >> /var/log/surf.log
+0 */6 * * * cd /path/to/surf-check && npm run check:cron >> /var/log/surf.log
 ```
 
 ### OpenClaw Integration
@@ -156,11 +156,11 @@ rm data/state.json
 Add to your cron jobs:
 ```json
 {
-  "name": "surfline-forecast-check",
+  "name": "surf-check",
   "schedule": { "kind": "cron", "expr": "0 */6 * * *", "tz": "America/New_York" },
   "payload": {
     "kind": "systemEvent",
-    "text": "Run: cd ~/surfline-alerts && npm run check:cron"
+    "text": "Run: cd ~/surf-check && npm run check:cron"
   },
   "sessionTarget": "main"
 }
@@ -170,7 +170,7 @@ Add to your cron jobs:
 
 ```bash
 #!/bin/bash
-OUTPUT=$(cd /path/to/surfline-alerts && npm run check:cron 2>/dev/null)
+OUTPUT=$(cd /path/to/surf-check && npm run check:cron 2>/dev/null)
 if [ -n "$OUTPUT" ]; then
   curl -X POST -H 'Content-type: application/json' \
     --data "{\"text\":\"$OUTPUT\"}" \
@@ -205,7 +205,7 @@ Useful for validating forecasts against actual conditions.
 ## Project Structure
 
 ```
-surfline-alerts/
+surf-check/
 ├── src/
 │   ├── types.ts              # Type definitions, spot configs
 │   ├── providers/
