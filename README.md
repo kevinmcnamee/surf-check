@@ -22,7 +22,7 @@ Surf forecasts get less accurate the further out you look. This tool adjusts its
 | 1-3 days | Fair or better | Sweet spot for planning |
 | Day of | Good or better | Only alert if it's actually firing |
 
-Same-day alerts are suppressed after 6am (dawn patrol has already passed).
+Same-day alerts are suppressed after 8am (dawn patrol has already passed).
 
 > **Note:** These are the default thresholds. All values are fully configurable in `src/types.ts` to match your preferences and local conditions.
 

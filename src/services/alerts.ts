@@ -53,10 +53,10 @@ function getMinRatingForDaysOut(daysOut: number): RatingKey {
 
 /**
  * Check if it's too late to alert for same-day surf
- * Dawn patrol cutoff: 6am
+ * Dawn patrol cutoff: 8am
  */
 function isPastDawnPatrol(now: Date = new Date()): boolean {
-  return now.getHours() >= 6;
+  return now.getHours() >= 8;
 }
 
 /**
