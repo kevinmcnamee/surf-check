@@ -104,7 +104,7 @@ export function evaluateForecast(
     return {
       shouldAlert: false,
       forecast,
-      reason: 'Too late for same-day alert (past 6am)',
+      reason: 'Too late for same-day alert (past 8am)',
     };
   }
 
