@@ -1,6 +1,6 @@
 ---
 name: surf-check
-description: Surf forecast decision engine with tiered confidence. Evaluates conditions and outputs alerts to stdout.
+description: Surf forecast decision engine. Outputs surfable conditions for agent alerting.
 metadata:
   openclaw:
     emoji: "🏄"
@@ -22,7 +22,7 @@ metadata:
 
 # surf-check
 
-A surf forecast decision engine. Evaluates forecasts against configurable thresholds and outputs alert-worthy conditions to stdout.
+A surf forecast decision engine. Evaluates forecasts against configurable thresholds and outputs surfable conditions — you handle the alerting.
 
 ## Quick Start
 
@@ -35,10 +35,10 @@ npm run check
 
 | Command | Description |
 |---------|-------------|
-| `npm run check` | Full forecast with alerts |
-| `npm run check:debug` | Shows why each day did/didn't alert |
+| `npm run check` | Full forecast with conditions |
+| `npm run check:debug` | Shows evaluation for each day |
 | `npm run check:json` | JSON output |
-| `npm run check:cron` | Cron mode — only new alerts, respects quiet hours |
+| `npm run check:cron` | Cron mode — only new conditions, respects quiet hours |
 
 ## Configuration
 
@@ -62,7 +62,7 @@ https://www.surfline.com/surf-report/spot-name/5842041f4e65fad6a7708a01
 
 All fields optional. Defaults: Belmar/Long Branch, 2-6ft, quiet hours 10pm-6am.
 
-## Alert Logic
+## Decision Logic
 
 Thresholds adjust based on forecast accuracy:
 
