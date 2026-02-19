@@ -24,6 +24,8 @@ Surf forecasts get less accurate the further out you look. This tool adjusts its
 
 Same-day alerts are suppressed after 6am (dawn patrol has already passed).
 
+> **Note:** These are the default thresholds. All values are fully configurable in `src/services/alerts.ts` to match your preferences and local conditions.
+
 ## Installation
 
 ```bash
