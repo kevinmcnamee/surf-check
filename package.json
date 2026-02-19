@@ -6,7 +6,9 @@
   "main": "dist/index.js",
   "scripts": {
     "build": "tsc",
-    "check": "npx tsx scripts/check-forecast.ts"
+    "check": "npx tsx scripts/check-forecast.ts",
+    "check:debug": "npx tsx scripts/check-forecast.ts --debug",
+    "check:json": "npx tsx scripts/check-forecast.ts --json"
   },
   "keywords": [
     "surfline",
