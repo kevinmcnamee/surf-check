@@ -42,19 +42,25 @@ npm run check
 
 ## Configuration
 
-Edit `src/types.ts` to configure:
+Create `~/.surf-check.json`:
 
-- **Spots** — Add any Surfline spot by ID
-- **Wave height range** — Default 2-6ft
-- **Quiet hours** — Default 10pm-6am
+```json
+{
+  "spots": [
+    { "id": "5842041f4e65fad6a7708a01", "name": "My Local Break" }
+  ],
+  "waveMin": 2,
+  "waveMax": 6
+}
+```
 
-### Adding Spots
-
-Find your spot ID from the Surfline URL:
+Find spot IDs from Surfline URLs:
 ```
 https://www.surfline.com/surf-report/spot-name/5842041f4e65fad6a7708a01
-                                              └── this is the spot ID
+                                              └── spot ID
 ```
+
+All fields optional. Defaults: Belmar/Long Branch, 2-6ft, quiet hours 10pm-6am.
 
 ## Alert Logic
 
