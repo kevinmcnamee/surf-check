@@ -27,7 +27,7 @@ Same-day alerts are suppressed after 6am (dawn patrol has already passed).
 ## Installation
 
 ```bash
-git clone https://github.com/yourusername/surf-check.git
+git clone https://github.com/kevinmcnamee/surf-check.git
 cd surf-check
 npm install
 ```
