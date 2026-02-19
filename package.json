@@ -8,7 +8,8 @@
     "build": "tsc",
     "check": "npx tsx scripts/check-forecast.ts",
     "check:debug": "npx tsx scripts/check-forecast.ts --debug",
-    "check:json": "npx tsx scripts/check-forecast.ts --json"
+    "check:json": "npx tsx scripts/check-forecast.ts --json",
+    "check:cron": "npx tsx scripts/check-forecast.ts --cron"
   },
   "keywords": [
     "surfline",

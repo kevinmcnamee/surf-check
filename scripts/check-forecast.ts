@@ -2,34 +2,48 @@
 /**
  * Check Surfline Forecast
  * 
- * Display current forecast and alerts for configured spots.
+ * Manual script to check current forecast for configured spots.
  * 
  * Usage:
- *   npx tsx scripts/check-forecast.ts
- *   npx tsx scripts/check-forecast.ts --debug
- *   npx tsx scripts/check-forecast.ts --json
+ *   npx tsx scripts/check-forecast.ts           # Show forecast + alerts
+ *   npx tsx scripts/check-forecast.ts --debug   # Show alert evaluation reasoning
+ *   npx tsx scripts/check-forecast.ts --json    # JSON output
+ *   npx tsx scripts/check-forecast.ts --cron    # Cron mode: only new alerts, update state
  */
 
 import { SPOTS, DEFAULT_ALERT_CONFIG } from '../src/types.js';
 import { fetchDailyForecasts, formatForecast } from '../src/providers/surfline.js';
 import {
   generateAlert,
+  formatAlertMessage,
   formatMultiSpotSummary,
   debugEvaluations,
 } from '../src/services/alerts.js';
+import {
+  loadState,
+  filterNewAlerts,
+  updateStateAfterCheck,
+} from '../src/services/state.js';
 
 async function main() {
   const jsonOutput = process.argv.includes('--json');
   const debugMode = process.argv.includes('--debug');
+  const cronMode = process.argv.includes('--cron');
   const spotsToCheck = [SPOTS.BELMAR, SPOTS.LONG_BRANCH];
   const now = new Date();
 
-  console.log('🏄 Checking Surfline forecasts...\n');
+  // Load state for deduplication
+  const state = await loadState();
 
-  const alerts = [];
+  if (!cronMode) {
+    console.log('🏄 Checking Surfline forecasts...\n');
+  }
+
+  const allAlerts = [];
+  const newAlerts = [];
 
   for (const spot of spotsToCheck) {
-    if (!jsonOutput) {
+    if (!cronMode && !jsonOutput) {
       console.log(`📍 ${spot.name}`);
       console.log('-'.repeat(40));
     }
@@ -37,7 +51,7 @@ async function main() {
     try {
       const forecasts = await fetchDailyForecasts(spot, 6);
 
-      if (!jsonOutput) {
+      if (!cronMode && !jsonOutput) {
         for (const forecast of forecasts) {
           console.log(formatForecast(forecast));
         }
@@ -50,10 +64,16 @@ async function main() {
 
       const alert = generateAlert(spot, forecasts, DEFAULT_ALERT_CONFIG, now);
       if (alert) {
-        alerts.push(alert);
+        allAlerts.push(alert);
+        
+        // Filter to only new alerts (not already sent)
+        const newAlert = filterNewAlerts(alert, state);
+        if (newAlert) {
+          newAlerts.push(newAlert);
+        }
       }
 
-      if (!jsonOutput) {
+      if (!cronMode && !jsonOutput) {
         console.log('');
       }
     } catch (error) {
@@ -61,17 +81,32 @@ async function main() {
     }
   }
 
-  if (jsonOutput) {
-    console.log(JSON.stringify(alerts, null, 2));
+  if (cronMode) {
+    // Cron mode: only output if there are NEW alerts
+    if (newAlerts.length > 0) {
+      console.log(formatMultiSpotSummary(newAlerts));
+      
+      // Update state to mark these as sent
+      await updateStateAfterCheck(state, newAlerts);
+    }
+    // Silent if no new alerts
+  } else if (jsonOutput) {
+    console.log(JSON.stringify({ allAlerts, newAlerts }, null, 2));
   } else {
     console.log('='.repeat(40));
     console.log('ALERTS');
     console.log('='.repeat(40));
 
-    if (alerts.length === 0) {
+    if (allAlerts.length === 0) {
       console.log('No alerts - conditions not meeting criteria.');
     } else {
-      console.log(formatMultiSpotSummary(alerts));
+      console.log(formatMultiSpotSummary(allAlerts));
+      
+      if (newAlerts.length < allAlerts.length) {
+        const alreadySent = allAlerts.reduce((n, a) => n + a.forecasts.length, 0) - 
+                           newAlerts.reduce((n, a) => n + a.forecasts.length, 0);
+        console.log(`(${alreadySent} alert(s) already sent previously)`);
+      }
     }
   }
 }
