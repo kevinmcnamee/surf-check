@@ -61,53 +61,51 @@ Your session cookies are saved locally and reused for authenticated API requests
 
 ## Configuration
 
-### Adding Your Spots
+Create a config file at `~/.surf-check.json` (global) or `./surf-check.json` (local):
 
-Edit `src/types.ts` to add your local breaks:
-
-```typescript
-export const SPOTS: Record<string, SpotConfig> = {
-  YOUR_SPOT: {
-    id: 'surfline-spot-id',           // From Surfline URL
-    name: 'Your Local Break',
-    slug: 'your-local-break',
-    url: 'https://www.surfline.com/surf-report/your-local-break/surfline-spot-id',
-  },
-  // Add more spots...
-};
-```
-
-**Finding Spot IDs:** Go to your spot on Surfline.com. The URL will look like:
-```
-https://www.surfline.com/surf-report/spot-name/5842041f4e65fad6a7708a01
-```
-The ID is the long string at the end: `5842041f4e65fad6a7708a01`
-
-### Alert Thresholds
-
-Edit `src/types.ts` to adjust wave height range:
-
-```typescript
-export const DEFAULT_ALERT_CONFIG: AlertConfig = {
-  waveMin: 2,        // Minimum wave height (ft)
-  waveMax: 6,        // Maximum wave height (ft)
-  forecastDays: 7,   // How far out to look
-};
-```
-
-### Quiet Hours
-
-By default, notifications are suppressed between 10pm and 6am. Alerts aren't lost — they'll be sent on the next check outside quiet hours.
-
-```typescript
-quietHours: {
-  enabled: true,
-  start: 22,  // 10pm
-  end: 6,     // 6am
+```json
+{
+  "spots": [
+    { "id": "5842041f4e65fad6a7708a01", "name": "Belmar" },
+    { "id": "630d04654da1381c5cb8aeb7", "name": "Long Branch" }
+  ],
+  "waveMin": 2,
+  "waveMax": 6,
+  "forecastDays": 7,
+  "quietHours": {
+    "enabled": true,
+    "start": 22,
+    "end": 6
+  }
 }
 ```
 
-Set `enabled: false` to receive alerts 24/7.
+All fields are optional — defaults are used for any missing values.
+
+### Finding Spot IDs
+
+Go to your spot on Surfline.com. The URL contains the spot ID:
+
+```
+https://www.surfline.com/surf-report/spot-name/5842041f4e65fad6a7708a01
+                                              └── this is the spot ID
+```
+
+### Defaults
+
+| Setting | Default |
+|---------|---------|
+| spots | Belmar, Long Branch (NJ) |
+| waveMin | 2 ft |
+| waveMax | 6 ft |
+| forecastDays | 7 |
+| quietHours | 10pm - 6am |
+
+### Quiet Hours
+
+Notifications are suppressed during quiet hours (default 10pm-6am). Alerts aren't lost — they're sent on the next check outside quiet hours.
+
+Set `"enabled": false` to receive alerts 24/7.
 
 ## Usage
 

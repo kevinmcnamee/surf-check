@@ -12,7 +12,6 @@
  *   npx tsx scripts/check-forecast.ts --cron --force  # Bypass quiet hours
  */
 
-import { SPOTS, DEFAULT_ALERT_CONFIG } from '../src/types.js';
 import { fetchDailyForecasts, formatForecast } from '../src/providers/surfline.js';
 import {
   generateAlert,
@@ -26,20 +25,30 @@ import {
   filterNewAlerts,
   updateStateAfterCheck,
 } from '../src/services/state.js';
+import { loadConfig, getConfigPath } from '../src/config.js';
 
 async function main() {
   const jsonOutput = process.argv.includes('--json');
   const debugMode = process.argv.includes('--debug');
   const cronMode = process.argv.includes('--cron');
   const forceMode = process.argv.includes('--force');
-  const spotsToCheck = [SPOTS.BELMAR, SPOTS.LONG_BRANCH];
+  
+  // Load config (from file or defaults)
+  const config = loadConfig();
+  const spotsToCheck = config.spots;
+  const alertConfig = config.alertConfig;
   const now = new Date();
 
   // Load state for deduplication
   const state = await loadState();
 
   if (!cronMode && !jsonOutput) {
-    console.log('🏄 Checking Surfline forecasts...\n');
+    const configPath = getConfigPath();
+    if (configPath) {
+      console.log(`🏄 Checking Surfline forecasts (config: ${configPath})...\n`);
+    } else {
+      console.log('🏄 Checking Surfline forecasts (using defaults)...\n');
+    }
   }
 
   const allAlerts = [];
@@ -62,10 +71,10 @@ async function main() {
 
       if (debugMode) {
         console.log('\nAlert evaluation:');
-        console.log(debugEvaluations(forecasts, DEFAULT_ALERT_CONFIG, now));
+        console.log(debugEvaluations(forecasts, alertConfig, now));
       }
 
-      const alert = generateAlert(spot, forecasts, DEFAULT_ALERT_CONFIG, now);
+      const alert = generateAlert(spot, forecasts, alertConfig, now);
       if (alert) {
         allAlerts.push(alert);
         
@@ -87,7 +96,7 @@ async function main() {
   if (cronMode) {
     // Check quiet hours before sending notifications (unless --force)
     if (!forceMode) {
-      const quietCheck = shouldSuppressNotification(DEFAULT_ALERT_CONFIG, now);
+      const quietCheck = shouldSuppressNotification(alertConfig, now);
       
       if (quietCheck.suppress) {
         // During quiet hours: don't output anything, don't mark as sent
