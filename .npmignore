@@ -1,0 +1,12 @@
+# Private files
+DISTRIBUTION.md
+PLAN.md
+
+# Dev files
+.git/
+.gitignore
+data/
+
+# IDE
+.vscode/
+.idea/
