@@ -196,30 +196,6 @@ if [ -n "$OUTPUT" ]; then
 fi
 ```
 
-## API Reference
-
-### Surfline Public API
-
-The tool uses Surfline's undocumented KBYG (Know Before You Go) API:
-
-```
-GET https://services.surfline.com/kbyg/spots/forecasts/{type}?spotId={id}&days={n}
-```
-
-Types: `wave`, `rating`, `wind`, `tides`, `conditions`, `weather`
-
-Free tier is limited to 6 days. Premium extends to 16 days.
-
-### NOAA Buoy Data
-
-Real-time buoy readings from NDBC:
-
-```
-GET https://www.ndbc.noaa.gov/data/realtime2/{stationId}.txt
-```
-
-Useful for validating forecasts against actual conditions.
-
 ## Project Structure
 
 ```
