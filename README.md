@@ -184,18 +184,6 @@ Add to your cron jobs:
 }
 ```
 
-### Slack/Discord Webhook
-
-```bash
-#!/bin/bash
-OUTPUT=$(cd /path/to/surf-check && npm run check:cron 2>/dev/null)
-if [ -n "$OUTPUT" ]; then
-  curl -X POST -H 'Content-type: application/json' \
-    --data "{\"text\":\"$OUTPUT\"}" \
-    YOUR_WEBHOOK_URL
-fi
-```
-
 ## Project Structure
 
 ```
