@@ -218,7 +218,7 @@ export interface AlertConfig {
   // Rating thresholds are now tiered by days out:
   // - 4+ days: Fair-Good+ (forecasts are fuzzy)
   // - 1-3 days: Fair+ (good confidence)
-  // - Day of: Good+ only, before 6am
+  // - Day of: Good+ only, before 8am
 }
 
 export const DEFAULT_ALERT_CONFIG: AlertConfig = {
