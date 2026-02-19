@@ -204,10 +204,17 @@ export interface DayForecast {
 // Alert Types
 // ============================================
 
+export interface QuietHours {
+  enabled: boolean;
+  start: number;  // Hour (0-23), e.g., 22 for 10pm
+  end: number;    // Hour (0-23), e.g., 6 for 6am
+}
+
 export interface AlertConfig {
   waveMin: number;
   waveMax: number;
   forecastDays: number;
+  quietHours: QuietHours;
   // Rating thresholds are now tiered by days out:
   // - 4+ days: Fair-Good+ (forecasts are fuzzy)
   // - 1-3 days: Fair+ (good confidence)
@@ -218,6 +225,11 @@ export const DEFAULT_ALERT_CONFIG: AlertConfig = {
   waveMin: 2,
   waveMax: 6,
   forecastDays: 7,
+  quietHours: {
+    enabled: true,
+    start: 22,  // 10pm
+    end: 6,     // 6am
+  },
 };
 
 export interface AlertDecision {

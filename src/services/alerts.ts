@@ -18,6 +18,7 @@ import {
   RatingKey,
   RATING_VALUES,
   DEFAULT_ALERT_CONFIG,
+  QuietHours,
 } from '../types.js';
 
 /**
@@ -56,6 +57,27 @@ function getMinRatingForDaysOut(daysOut: number): RatingKey {
  */
 function isPastDawnPatrol(now: Date = new Date()): boolean {
   return now.getHours() >= 6;
+}
+
+/**
+ * Check if current time is within quiet hours
+ * Handles overnight ranges (e.g., 22:00 - 06:00)
+ */
+function isQuietHours(quietHours: QuietHours, now: Date = new Date()): boolean {
+  if (!quietHours.enabled) {
+    return false;
+  }
+
+  const hour = now.getHours();
+  const { start, end } = quietHours;
+
+  // Handle overnight range (e.g., 22:00 - 06:00)
+  if (start > end) {
+    return hour >= start || hour < end;
+  }
+  
+  // Handle same-day range (e.g., 14:00 - 18:00)
+  return hour >= start && hour < end;
 }
 
 /**
@@ -254,6 +276,34 @@ export function formatMultiSpotSummary(alerts: Alert[]): string {
   }
 
   return lines.join('\n');
+}
+
+/**
+ * Check if notifications should be suppressed due to quiet hours
+ */
+export function shouldSuppressNotification(
+  config: AlertConfig = DEFAULT_ALERT_CONFIG,
+  now: Date = new Date()
+): { suppress: boolean; reason?: string } {
+  if (isQuietHours(config.quietHours, now)) {
+    const hour = now.getHours();
+    const ampm = hour >= 12 ? 'pm' : 'am';
+    const displayHour = hour % 12 || 12;
+    return {
+      suppress: true,
+      reason: `Quiet hours active (${displayHour}${ampm} is between ${formatHour(config.quietHours.start)} and ${formatHour(config.quietHours.end)})`,
+    };
+  }
+  return { suppress: false };
+}
+
+/**
+ * Format hour for display (e.g., 22 -> "10pm", 6 -> "6am")
+ */
+function formatHour(hour: number): string {
+  const ampm = hour >= 12 ? 'pm' : 'am';
+  const displayHour = hour % 12 || 12;
+  return `${displayHour}${ampm}`;
 }
 
 /**

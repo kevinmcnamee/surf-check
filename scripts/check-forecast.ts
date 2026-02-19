@@ -9,6 +9,7 @@
  *   npx tsx scripts/check-forecast.ts --debug   # Show alert evaluation reasoning
  *   npx tsx scripts/check-forecast.ts --json    # JSON output
  *   npx tsx scripts/check-forecast.ts --cron    # Cron mode: only new alerts, update state
+ *   npx tsx scripts/check-forecast.ts --cron --force  # Bypass quiet hours
  */
 
 import { SPOTS, DEFAULT_ALERT_CONFIG } from '../src/types.js';
@@ -18,6 +19,7 @@ import {
   formatAlertMessage,
   formatMultiSpotSummary,
   debugEvaluations,
+  shouldSuppressNotification,
 } from '../src/services/alerts.js';
 import {
   loadState,
@@ -29,6 +31,7 @@ async function main() {
   const jsonOutput = process.argv.includes('--json');
   const debugMode = process.argv.includes('--debug');
   const cronMode = process.argv.includes('--cron');
+  const forceMode = process.argv.includes('--force');
   const spotsToCheck = [SPOTS.BELMAR, SPOTS.LONG_BRANCH];
   const now = new Date();
 
@@ -82,6 +85,17 @@ async function main() {
   }
 
   if (cronMode) {
+    // Check quiet hours before sending notifications (unless --force)
+    if (!forceMode) {
+      const quietCheck = shouldSuppressNotification(DEFAULT_ALERT_CONFIG, now);
+      
+      if (quietCheck.suppress) {
+        // During quiet hours: don't output anything, don't mark as sent
+        // Alerts will be sent on next check outside quiet hours
+        return;
+      }
+    }
+    
     // Cron mode: only output if there are NEW alerts
     if (newAlerts.length > 0) {
       console.log(formatMultiSpotSummary(newAlerts));

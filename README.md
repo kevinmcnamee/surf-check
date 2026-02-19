@@ -24,7 +24,21 @@ Surf forecasts get less accurate the further out you look. This tool adjusts its
 
 Same-day alerts are suppressed after 6am (dawn patrol has already passed).
 
-> **Note:** These are the default thresholds. All values are fully configurable in `src/services/alerts.ts` to match your preferences and local conditions.
+> **Note:** These are the default thresholds. All values are fully configurable in `src/types.ts` to match your preferences and local conditions.
+
+### Quiet Hours
+
+By default, notifications are suppressed between 10pm and 6am. Alerts aren't lost — they'll be sent on the next check outside quiet hours.
+
+```typescript
+quietHours: {
+  enabled: true,
+  start: 22,  // 10pm
+  end: 6,     // 6am
+}
+```
+
+Set `enabled: false` to receive alerts 24/7.
 
 ## Installation
 
