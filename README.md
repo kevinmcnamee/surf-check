@@ -1,13 +1,24 @@
 # 🏄 surf-check
 
-An AI agent skill for smart surf forecast alerts. Get notified when conditions are worth paddling out — with tiered confidence based on forecast accuracy.
+A surf forecast decision engine that tells you when conditions are worth paddling out. It evaluates forecasts against configurable thresholds and outputs alerts to stdout — what you do with that output is up to you.
 
-Built for [OpenClaw](https://openclaw.ai), but works with any AI agent framework or as a standalone CLI.
+Built as an AI agent skill for [OpenClaw](https://openclaw.ai), but works with any AI agent framework, automation pipeline, or as a standalone CLI.
+
+## What It Does
+
+surf-check **evaluates** surf forecasts and **outputs** alert-worthy conditions. It does not send notifications directly — it's the decision layer, not the delivery layer.
+
+```
+[Forecast Data] → [surf-check] → [stdout] → [Your notification system]
+```
+
+This keeps it flexible: pipe output to Telegram, Slack, SMS, email, Home Assistant, or any webhook.
 
 ## Features
 
 - **Tiered alert logic** — Requires higher confidence for longer-range forecasts
 - **State tracking** — No duplicate alerts for the same forecast
+- **Quiet hours** — Suppress output during configurable hours (default 10pm-6am)
 - **Premium support** — Use your Surfline Premium subscription for 16-day forecasts
 - **NOAA buoy data** — Cross-reference forecasts with real buoy readings
 - **Cron-ready** — Designed for periodic automated checks
@@ -161,17 +172,14 @@ To reset and re-send all alerts:
 rm data/state.json
 ```
 
-## Integration Examples
+## Sending Alerts
 
-### Cron Job (every 6 hours)
+surf-check outputs to stdout. To actually receive notifications, connect it to your preferred delivery method:
 
-```bash
-0 */6 * * * cd /path/to/surf-check && npm run check:cron >> /var/log/surf.log
-```
+### OpenClaw (AI Agent)
 
-### OpenClaw Integration
+The simplest setup. OpenClaw runs surf-check on a schedule and sends output to Telegram, Discord, or any configured channel.
 
-Add to your cron jobs:
 ```json
 {
   "name": "surf-check",
@@ -183,6 +191,26 @@ Add to your cron jobs:
   "sessionTarget": "main"
 }
 ```
+
+### Cron + Webhook
+
+Pipe output to any webhook (Slack, Discord, ntfy, Pushover, etc.):
+
+```bash
+#!/bin/bash
+OUTPUT=$(cd /path/to/surf-check && npm run check:cron 2>/dev/null)
+[ -n "$OUTPUT" ] && curl -d "$OUTPUT" https://your-webhook-url
+```
+
+### Cron + Email
+
+```bash
+0 */6 * * * cd /path/to/surf-check && npm run check:cron | mail -s "Surf Alert" you@email.com
+```
+
+### Home Automation
+
+Works with Home Assistant, n8n, Node-RED — anything that can run a script and act on stdout.
 
 ## Project Structure
 
