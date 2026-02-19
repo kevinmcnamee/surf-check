@@ -1,6 +1,6 @@
 {
   "name": "surf-check",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "AI agent skill for smart surf forecast alerts with tiered confidence",
   "type": "module",
   "main": "dist/index.js",
