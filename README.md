@@ -1,6 +1,8 @@
 # 🏄 surf-check
 
-Smart surf forecast alerts. Get notified when conditions are worth paddling out — with tiered confidence based on forecast accuracy.
+An AI agent skill for smart surf forecast alerts. Get notified when conditions are worth paddling out — with tiered confidence based on forecast accuracy.
+
+Built for [OpenClaw](https://openclaw.ai), but works with any AI agent framework or as a standalone CLI.
 
 ## Features
 
