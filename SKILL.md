@@ -1,33 +1,18 @@
 ---
 name: surf-check
 description: Surf forecast decision engine. Outputs surfable conditions for agent alerting.
-metadata:
-  openclaw:
-    emoji: "🏄"
-    requires:
-      bins: ["node", "npx"]
-      env: []
-    config:
-      - id: surfline_email
-        label: Surfline Email
-        type: string
-        env: SURFLINE_EMAIL
-        optional: true
-      - id: surfline_password
-        label: Surfline Password
-        type: secret
-        env: SURFLINE_PASSWORD
-        optional: true
+metadata: {"openclaw":{"emoji":"🏄","homepage":"https://github.com/kevinmcnamee/surf-check","requires":{"bins":["node","npx"],"env":[]},"config":[{"id":"surfline_email","label":"Surfline Email","type":"string","env":"SURFLINE_EMAIL","optional":true},{"id":"surfline_password","label":"Surfline Password","type":"secret","env":"SURFLINE_PASSWORD","optional":true}]}}
 ---
 
 # surf-check
 
 Checks surf forecasts and tells you when conditions are worth paddling out.
 
-## Location
+## Quick Start
 
-```
-~/workspace/surf-check
+```bash
+cd {baseDir} && npm install
+npm run check
 ```
 
 ## Commands
@@ -35,7 +20,7 @@ Checks surf forecasts and tells you when conditions are worth paddling out.
 Run from the skill directory:
 
 ```bash
-cd ~/workspace/surf-check && npm run check
+cd {baseDir} && npm run check
 ```
 
 | Command | When to Use |
@@ -73,37 +58,58 @@ Wave height: 2-6ft (configured in `src/types.ts`)
 
 When conditions are surfable:
 1. **Summarize naturally** — "Looks like Saturday could be good at Belmar, 2-3ft and Fair conditions"
-2. **Include the day and spot** — Kevin needs to know when and where
-3. **Don't over-explain the ratings** — Kevin knows what Fair/Good means
+2. **Include the day and spot** — user needs to know when and where
+3. **Don't over-explain the ratings** — surfers know what Fair/Good means
 
 When user asks about surf:
 - Run `npm run check` and summarize the output
 - If nothing's showing up, check `npm run check:debug` to see why
 
-## Current Setup
+## Configuration
 
-- **Spots:** Belmar (16th Ave), Long Branch
-- **Cron:** Every 6 hours (`0 */6 * * *`) — runs automatically, you'll get a system event with output
-- **Quiet hours:** 10pm-6am (suppressed, queued for next check)
-- **State file:** `data/state.json` — tracks what's been reported to avoid duplicates
+Default spots: Belmar (16th Ave), Long Branch (NJ)
 
-## Cron Behavior
+To customize, create `~/.surf-check.json`:
 
-A cron job runs `npm run check:cron` every 6 hours. When it fires:
+```json
+{
+  "spots": [
+    { "id": "5842041f4e65fad6a7708a01", "name": "My Local Break" }
+  ],
+  "waveMin": 2,
+  "waveMax": 6
+}
+```
+
+Find spot IDs from Surfline URLs:
+```
+https://www.surfline.com/surf-report/spot-name/5842041f4e65fad6a7708a01
+                                              └── spot ID
+```
+
+## OpenClaw Cron Integration
+
+```json
+{
+  "name": "surf-check",
+  "schedule": { "kind": "cron", "expr": "0 */6 * * *", "tz": "America/New_York" },
+  "payload": {
+    "kind": "systemEvent",
+    "text": "Run: cd {baseDir} && npm run check:cron"
+  },
+  "sessionTarget": "main"
+}
+```
+
+When cron fires:
 - You receive output as a system event
 - Only *new* conditions are shown (state tracking prevents duplicates)
-- If output is empty, nothing qualified or it's already been reported
-
-When you get cron output with conditions, alert Kevin naturally via his preferred channel (Telegram).
+- If output is empty, nothing qualified or already reported
 
 ## Troubleshooting
 
 **No output from cron:** Normal if nothing qualifies or already reported. Run `npm run check:debug` to see evaluation.
 
-**Reset state:** `rm ~/workspace/surf-check/data/state.json` to re-report all conditions.
+**Reset state:** `rm {baseDir}/data/state.json` to re-report all conditions.
 
-**Add a spot:** Edit `src/types.ts`, find spot ID from Surfline URL:
-```
-https://www.surfline.com/surf-report/spot-name/5842041f4e65fad6a7708a01
-                                              └── spot ID
-```
+**Add a spot:** Edit `src/types.ts` or use `~/.surf-check.json` config.
