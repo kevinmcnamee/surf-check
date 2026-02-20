@@ -1,23 +1,25 @@
 # 🏄 surf-check
 
-A surf forecast decision engine that tells you when conditions are worth paddling out. It evaluates forecasts against configurable thresholds and outputs alerts to stdout — what you do with that output is up to you.
+A surf forecast decision engine that identifies when conditions are worth paddling out. Evaluates forecasts against configurable thresholds and outputs surfable conditions to stdout — what you do with that output is up to you.
 
 Built as an AI agent skill for [OpenClaw](https://openclaw.ai), but works with any AI agent framework, automation pipeline, or as a standalone CLI.
 
 ## What It Does
 
-surf-check **evaluates** surf forecasts and **outputs** alert-worthy conditions. It does not send notifications directly — it's the decision layer, not the delivery layer.
+surf-check **evaluates** surf forecasts and **outputs** conditions that meet your criteria. It does not send notifications directly — it's the decision layer, not the delivery layer.
 
 ```
 [Forecast Data] → [surf-check] → [stdout] → [Your notification system]
 ```
 
-This keeps it flexible: pipe output to Telegram, Slack, SMS, email, Home Assistant, or any webhook.
+**As a standalone CLI:** Outputs surfable conditions to stdout. Pipe to any notification system.
+
+**As an AI agent skill:** Your agent reads the output and handles alerting (see [SKILL.md](SKILL.md)).
 
 ## Features
 
-- **Tiered alert logic** — Requires higher confidence for longer-range forecasts
-- **State tracking** — No duplicate alerts for the same forecast
+- **Tiered decision logic** — Requires higher confidence for longer-range forecasts
+- **State tracking** — No duplicate output for the same forecast
 - **Quiet hours** — Suppress output during configurable hours (default 10pm-6am)
 - **Premium support** — Use your Surfline Premium subscription for 16-day forecasts
 - **NOAA buoy data** — Cross-reference forecasts with real buoy readings
@@ -25,15 +27,15 @@ This keeps it flexible: pipe output to Telegram, Slack, SMS, email, Home Assista
 
 ## How It Works
 
-Surf forecasts get less accurate the further out you look. This tool adjusts its alert threshold accordingly:
+Surf forecasts get less accurate the further out you look. surf-check adjusts its confidence threshold accordingly:
 
 | Days Out | Minimum Rating | Rationale |
 |----------|----------------|-----------|
 | 4+ days | Fair-Good or better | Forecasts are fuzzy, need high confidence |
 | 1-3 days | Fair or better | Sweet spot for planning |
-| Day of | Good or better | Only alert if it's actually firing |
+| Day of | Good or better | Only flag if it's actually firing |
 
-Same-day alerts are suppressed after 8am (dawn patrol has already passed).
+Same-day conditions are suppressed after 8am (dawn patrol has already passed).
 
 > **Note:** These are the default thresholds. All values are fully configurable in `src/types.ts` to match your preferences and local conditions.
 
@@ -105,17 +107,17 @@ https://www.surfline.com/surf-report/spot-name/5842041f4e65fad6a7708a01
 
 Notifications are suppressed during quiet hours (default 10pm-6am). Alerts aren't lost — they're sent on the next check outside quiet hours.
 
-Set `"enabled": false` to receive alerts 24/7.
+Set `"enabled": false` to output conditions 24/7.
 
 ## Usage
 
 ### Manual Check
 
 ```bash
-# Full forecast with alerts
+# Full forecast with conditions
 npm run check
 
-# With debug output (shows why each day did/didn't alert)
+# With debug output (shows why each day did/didn't match)
 npm run check:debug
 
 # JSON output
@@ -148,13 +150,13 @@ npm run check:cron
 ```
 
 Cron mode:
-- Only outputs if there are **new** alerts
-- Updates state file to track sent alerts
+- Only outputs **new** surfable conditions
+- Updates state file to track what's been output
 - Silent if nothing new (perfect for cron jobs)
 
 ### State Management
 
-Alert history is stored in `data/state.json`:
+Output history is stored in `data/state.json`:
 
 ```json
 {
@@ -165,14 +167,14 @@ Alert history is stored in `data/state.json`:
 }
 ```
 
-To reset and re-send all alerts:
+To reset and re-output all conditions:
 ```bash
 rm data/state.json
 ```
 
-## Sending Alerts
+## Turning Decisions into Alerts
 
-surf-check outputs to stdout. To actually receive notifications, connect it to your preferred delivery method:
+surf-check outputs to stdout. To receive actual notifications, connect it to your preferred delivery method:
 
 ### OpenClaw (AI Agent)
 
